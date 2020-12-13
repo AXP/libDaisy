@@ -105,11 +105,12 @@ AS_DEFS =
 # C defines
 C_DEFS ?=
 C_DEFS +=  \
--DUSE_HAL_DRIVER \
 -DSTM32H750xx \
 -DUSE_HAL_DRIVER \
 -DHSE_VALUE=16000000 \
--DSTM32H750xx
+-DCORE_CM7  \
+-DARM_MATH_CM7 \
+
 
 
 # AS includes
@@ -122,11 +123,14 @@ C_INCLUDES += \
 -I$(LIBDAISY_DIR)/src/ \
 -I$(LIBDAISY_DIR)/src/usbd \
 -I$(LIBDAISY_DIR)/Drivers/CMSIS/Include/ \
--I$(LIBDAISY_DIR)/Drivers/CMSIS/Device/ST/STM32H7xx/Include \
+-I$(LIBDAISY_DIR)/Drivers/CMSIS/Device/ST/STM32H7xx/Include/ \
+-I$(LIBDAISY_DIR)/Drivers/CMSIS/DSP/Include/ \
 -I$(LIBDAISY_DIR)/Drivers/STM32H7xx_HAL_Driver/Inc/ \
 -I$(LIBDAISY_DIR)/Middlewares/ST/STM32_USB_Device_Library/Core/Inc \
 -I$(SYSTEM_FILES_DIR)/ \
--I$(DAISYSP_DIR) \
+-I$(DAISYSP_DIR)/ \
+-I$(DAISYSP_DIR)/modules/ \
+-include stm32h7xx.h
 
 
 # compile gcc flags
@@ -187,17 +191,25 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(CPP_SOURCES:.cpp=.o)))
 vpath %.cpp $(sort $(dir $(CPP_SOURCES)))
 # list of ASM program objects
-OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
+ASM_TEMP = $(ASM_SOURCES:.S=.s)
+OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_TEMP:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
+vpath %.S $(sort $(dir $(ASM_SOURCES)))
+
+#OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.S=.o)))
+#vpath %.S $(sort $(dir $(ASM_SOURCES)))
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
-	$(CC) -c $(CFLAGS) $(C_STANDARD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
+	$(CC) -c $(CFLAGS) $(C_STANDARD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $(abspath $<) -o $(abspath $@)
 
 $(BUILD_DIR)/%.o: %.cpp Makefile | $(BUILD_DIR)
-	$(CXX) -c $(CPPFLAGS) $(CPP_STANDARD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $< -o $@
+	$(CXX) -c $(CPPFLAGS) $(CPP_STANDARD) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.cpp=.lst)) $(abspath $<) -o $(abspath $@)
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
+	$(AS) -c $(ASFLAGS) $(abspath $<) -o $(abspath $@)
+
+$(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
+	$(AS) -c $(ASFLAGS) $(abspath $<) -o $(abspath $@)
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
 	$(CXX) $(OBJECTS) $(LDFLAGS) -o $@

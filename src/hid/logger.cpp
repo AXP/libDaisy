@@ -119,7 +119,9 @@ template class Logger<LOGGER_INTERNAL>;
 template class Logger<LOGGER_EXTERNAL>;
 template class Logger<LOGGER_SEMIHOST>;
 
+#ifdef STM32H750xx
 /** LoggerImpl static member variables */
 UsbHandle LoggerImpl<LOGGER_INTERNAL>::usb_handle_;
 UsbHandle LoggerImpl<LOGGER_EXTERNAL>::usb_handle_;
+#endif
 } // namespace daisy

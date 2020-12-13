@@ -1,11 +1,23 @@
 #pragma once
 #ifndef __DSY_LOGGER_IMPL_H
 #define __DSY_LOGGER_IMPL_H
-#include <unistd.h>
 #include <cassert>
+
+#if defined(STM32H750xx)
 #include "hid/usb.h"
 #include "usbd_def.h"
 #include "sys/system.h"
+#include <unistd.h>
+#elif defined(_WIN32)
+#include <io.h>
+#define STDOUT_FILENO _fileno(stdout)
+
+inline void write(int __fd, const void* __buf, size_t __nbyte) 
+{
+    _write(__fd, __buf, (unsigned int)__nbyte);
+}
+#endif
+
 
 
 namespace daisy
@@ -15,9 +27,14 @@ namespace daisy
 enum LoggerDestination
 {
     LOGGER_NONE,     /**< mute logging */
+    LOGGER_SEMIHOST, /**< stdout */
+#ifdef STM32H750xx
     LOGGER_INTERNAL, /**< internal USB port */
     LOGGER_EXTERNAL, /**< external USB port */
-    LOGGER_SEMIHOST, /**< stdout */
+#else
+    LOGGER_INTERNAL = LOGGER_SEMIHOST, /**< imitate internal USB port */
+    LOGGER_EXTERNAL = LOGGER_NONE,     /**< disable external USB port */
+#endif
 };
 
 /** @brief Logging I/O underlying implementation
@@ -37,7 +54,7 @@ class LoggerImpl
     static bool Transmit(const void* buffer, size_t bytes) { return true; }
 };
 
-
+#ifdef STM32H750xx
 /**  @brief Specialization for internal USB port
  */
 template <>
@@ -99,7 +116,7 @@ class LoggerImpl<LOGGER_EXTERNAL>
     static UsbHandle usb_handle_;
 };
 
-
+#endif
 /**  @brief Specialization for semihosting (stdout)
  */
 template <>

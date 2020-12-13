@@ -135,11 +135,10 @@ class DaisySeed
     dsy_dac_handle   dac_handle;   /**< & */
     UsbHandle        usb_handle;   /**< & */
 
-  private:
-    /** Local shorthand for debug log destination
-    */
+    /* Shorthand for default debug log destination */
     using Log = Logger<LOGGER_INTERNAL>;
 
+  private:
 
     void ConfigureSdram();
     void ConfigureQspi();
