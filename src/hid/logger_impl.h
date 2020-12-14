@@ -9,7 +9,7 @@
 #define DAISY_HW
 #endif
 
-#if defined(DAISY_HW) 
+#if defined(DAISY_HW)
 #include "hid/usb.h"
 #include "usbd_def.h"
 #include "sys/system.h"
@@ -22,7 +22,6 @@
 #else
 #error "Platform not defined"
 #endif
-
 
 
 namespace daisy
