@@ -16,7 +16,7 @@ namespace daisy
 /** Logger configuration
  */
 #define LOGGER_NEWLINE "\r\n" /**< custom newline character sequence */
-#define LOGGER_BUFFER 128 /**< size in bytes */
+#define LOGGER_BUFFER 256 /**< size in bytes */
 
 /** Helper macros for string concatenation and macro expansion
  * @{
