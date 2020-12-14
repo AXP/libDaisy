@@ -44,10 +44,7 @@ extern "C"
     /** These functions are specific to the actual clock ticks at the timer frequency which is currently fixed at 200MHz
         \return a number 0x00000000-0xffffffff of the current tick
     */
-    inline uint32_t dsy_tim_get_tick()
-    {
-        return tim.htim2.Instance->CNT;
-    }
+    inline uint32_t dsy_tim_get_tick() { return tim.htim2.Instance->CNT; }
 
     /** 
     blocking delay of cnt timer ticks. 
