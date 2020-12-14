@@ -147,7 +147,6 @@ class DaisySeed
     using Log = Logger<LOGGER_INTERNAL>;
 
   private:
-
     void ConfigureSdram();
     void ConfigureQspi();
     void ConfigureAudio();
