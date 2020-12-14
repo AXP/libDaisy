@@ -1,19 +1,4 @@
 #include "per/tim.h"
-//#include <stm32h7xx_hal.h>
-
-// enum
-// {
-//     SCALE_MS,
-//     SCALE_US,
-//     SCALE_NS,
-//     SCALE_LAST,
-// };
-
-// typedef struct
-// {
-//     uint32_t          scale[SCALE_LAST];
-//     TIM_HandleTypeDef htim2;
-// } dsy_tim;
 
 static void sthal_tim_init();
 
@@ -31,10 +16,6 @@ void dsy_tim_start()
     HAL_TIM_Base_Start(&tim.htim2);
 }
 
-// uint32_t dsy_tim_get_tick()
-// {
-//     return tim.htim2.Instance->CNT;
-// }
 uint32_t dsy_tim_get_ticks_per_us()
 {
     return tim.scale[SCALE_US];
