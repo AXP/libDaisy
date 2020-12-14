@@ -1,6 +1,7 @@
 #pragma once
 #ifndef __DSY_LOGGER_IMPL_H
 #define __DSY_LOGGER_IMPL_H
+
 #include <cassert>
 #include <cstdint>
 
@@ -13,6 +14,7 @@
 #include "usbd_def.h"
 #include "sys/system.h"
 #include <unistd.h>
+
 #elif defined(_WIN32)
 #include <io.h>
 #define STDOUT_FILENO _fileno(stdout)
@@ -134,7 +136,7 @@ class LoggerImpl<LOGGER_SEMIHOST>
      */
     static bool Transmit(const void* buffer, size_t bytes)
     {
-        _write(STDOUT_FILENO, buffer, (uint32_t)bytes);
+        write(STDOUT_FILENO, buffer, (uint32_t)bytes);
         return true;
     }
 };
