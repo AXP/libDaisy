@@ -2,8 +2,13 @@
 #ifndef __DSY_LOGGER_IMPL_H
 #define __DSY_LOGGER_IMPL_H
 #include <cassert>
+#include <cstdint>
 
-#if defined(STM32H750xx)
+#if defined STM32H750xx // Daisy platform, TODO: better alternative? */
+#define DAISY_HW
+#endif
+
+#if defined(DAISY_HW) 
 #include "hid/usb.h"
 #include "usbd_def.h"
 #include "sys/system.h"
@@ -12,10 +17,8 @@
 #include <io.h>
 #define STDOUT_FILENO _fileno(stdout)
 
-inline void write(int __fd, const void* __buf, size_t __nbyte) 
-{
-    _write(__fd, __buf, (unsigned int)__nbyte);
-}
+#else
+#error "Platform not defined"
 #endif
 
 
@@ -28,7 +31,7 @@ enum LoggerDestination
 {
     LOGGER_NONE,     /**< mute logging */
     LOGGER_SEMIHOST, /**< stdout */
-#ifdef STM32H750xx
+#ifdef DAISY_HW
     LOGGER_INTERNAL, /**< internal USB port */
     LOGGER_EXTERNAL, /**< external USB port */
 #else
@@ -54,7 +57,7 @@ class LoggerImpl
     static bool Transmit(const void* buffer, size_t bytes) { return true; }
 };
 
-#ifdef STM32H750xx
+#ifdef DAISY_HW
 /**  @brief Specialization for internal USB port
  */
 template <>
@@ -131,7 +134,7 @@ class LoggerImpl<LOGGER_SEMIHOST>
      */
     static bool Transmit(const void* buffer, size_t bytes)
     {
-        write(STDOUT_FILENO, buffer, bytes);
+        _write(STDOUT_FILENO, buffer, (uint32_t)bytes);
         return true;
     }
 };
